@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هواشناسی پیشرفته</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
+        
+        :root {
+            --primary-color: #4b6cb7;
+            --secondary-color: #182848;
+            --text-color: #f0f0f0;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --card-border: rgba(255, 255, 255, 0.25);
+            --shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            --highlight: #3ae6ff;
+            --danger: #ff3d58;
+            --warning: #ffd700;
+            --success: #4ade80;
+        }
+        
+        .dark-mode {
+            --primary-color: #0f2027;
+            --secondary-color: #203a43;
+            --text-color: #f0f0f0;
+            --card-bg: rgba(0, 0, 0, 0.5);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+            --highlight: #3ae6ff;
+        }
+        
+        .light-mode {
+            --primary-color: #e0e7ff;
+            --secondary-color: #a5b4fc;
+            --text-color: #1e293b;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+            --highlight: #4b6cb7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: background-color 0.5s ease, color 0.3s ease;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            font-size: 1.8em;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .theme-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .theme-switch i {
+            font-size: 1em;
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-switch .sun {
+            color: var(--warning);
+            transform: translateX(0);
+        }
+        
+        .theme-switch .moon {
+            color: var(--highlight);
+            transform: translateX(30px);
+        }
+        
+        body.light-mode .theme-switch .sun {
+            transform: translateX(30px);
+        }
+        
+        body.light-mode .theme-switch .moon {
+            transform: translateX(0);
+        }
+        
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: none;
+            background: var(--card-bg);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--card-border);
+            color: var(--text-color);
+            font-size: 1em;
+            box-shadow: var(--shadow);
+            padding-right: 50px;
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        .search-btn {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        
+        .main-card {
+            width: 100%;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .main-card::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: conic-gradient(
+                from 0deg,
+                var(--danger),
+                var(--warning),
+                var(--highlight),
+                var(--primary-color),
+                var(--secondary-color),
+                var(--danger)
+            );
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .current-weather {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .weather-info {
+            flex: 1;
+        }
+        
+        .location {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .date-time {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .temperature {
+            font-size: 4em;
+            font-weight: 300;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .weather-description {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+        
+        .weather-icon {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8em;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .detail-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid var(--card-border);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .detail-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .detail-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: var(--highlight);
+        }
+        
+        .detail-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .detail-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .forecast-container {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-left: 10px;
+            color: var(--highlight);
+        }
+        
+        .forecast-cards {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding-bottom: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--highlight) transparent;
+        }
+        
+        .forecast-cards::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .forecast-cards::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .forecast-cards::-webkit-scrollbar-thumb {
+            background-color: var(--highlight);
+            border-radius: 10px;
+        }
+        
+        .forecast-card {
+            min-width: 150px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid var(--card-border);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .forecast-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .forecast-day {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .forecast-icon {
+            font-size: 2.5em;
+            margin: 10px 0;
+            color: var(--highlight);
+        }
+        
+        .forecast-temp {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .max-temp {
+            font-weight: 700;
+        }
+        
+        .min-temp {
+            opacity: 0.7;
+        }
+        
+        .hourly-forecast {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .hourly-chart-container {
+            width: 100%;
+            height: 200px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-container {
+            width: 100%;
+            height: 300px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            opacity: 0.7;
+        }
+        
+        .decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .decoration span {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 15s linear infinite;
+            animation-delay: calc(var(--i) * -1s);
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(80vh) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20vh) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            z-index: 1000;
+            flex-direction: column;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--highlight);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loading-text {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .unit-switch {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+        }
+        
+        .unit-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-color);
+            border-radius: 20px;
+            padding: 5px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .unit-btn.active {
+            background: var(--highlight);
+            color: #fff;
+            border-color: var(--highlight);
+        }
+        
+        .aqi-indicator {
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, #00e400, #ffff00, #ff7e00, #ff0000, #8f3f97, #7e0023);
+            border-radius: 5px;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .aqi-level {
+            position: absolute;
+            height: 100%;
+            width: 20%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+        }
+        
+        .sun-movement {
+            width: 100%;
+            height: 100px;
+            position: relative;
+            margin-top: 30px;
+        }
+        
+        .sun-path {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            position: absolute;
+            top: 50%;
+            border-radius: 2px;
+        }
+        
+        .sun-icon {
+            position: absolute;
+            color: var(--warning);
+            font-size: 2em;
+            transform: translate(-50%, -50%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        .sunrise-sunset {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        
+        .sun-event {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sun-event i {
+            font-size: 1.5em;
+            color: var(--warning);
+            margin-bottom: 5px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: var(--shadow);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .current-weather {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .weather-icon {
+                margin: 20px 0;
+            }
+            
+            .temperature {
+                justify-content: center;
+            }
+            
+            .section-title {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="decoration">
+        <span style="--i:1; left: 5%;"></span>
+        <span style="--i:2; left: 15%;"></span>
+        <span style="--i:3; left: 25%;"></span>
+        <span style="--i:4; left: 35%;"></span>
+        <span style="--i:5; left: 45%;"></span>
+        <span style="--i:6; left: 55%;"></span>
+        <span style="--i:7; left: 65%;"></span>
+        <span style="--i:8; left: 75%;"></span>
+        <span style="--i:9; left: 85%;"></span>
+        <span style="--i:10; left: 95%;"></span>
+    </div>
+    
+    <div class="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">در حال دریافت اطلاعات آب و هوا...</div>
+    </div>
+    
+    <div class="container" style="display: none;">
+        <header>
+            <h1 class="title">هواشناسی پیشرفته</h1>
+            <div class="theme-switch" id="themeSwitch">
+                <i class="fas fa-sun sun"></i>
+                <i class="fas fa-moon moon"></i>
+            </div>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="جستجوی شهر...">
+            <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        
+        <div class="main-card">
+            <div class="current-weather">
+                <div class="weather-info">
+                    <h2 class="location" id="location">تهران، ایران</h2>
+                    <div class="date-time" id="dateTime">یکشنبه ۱ فروردین ۱۴۰۲ - ۱۲:۰۰ بعدازظهر</div>
+                    <div class="temperature" id="temperature">
+                        ۲۴ <span style="font-size: 0.5em; margin-top: 0.2em;">°C</span>
+                    </div>
+                    <div class="weather-description" id="weatherDescription">آسمان صاف</div>
+                    
+                    <div class="weather-details">
+                        <div class="detail-card">
+                            <div class="detail-icon"><i class="fas fa-wind"></i></div>
+                            <div class="detail-value" id="windSpeed">۱۰ km/h</div>
+                            <div class="detail-label">سرعت باد</div>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <div class="detail-icon"><i class="fas fa-tint"></i></div>
+                            <div class="detail-value" id="humidity">۴۵٪</div>
+                            <div class="detail-label">رطوبت</div>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <div class="detail-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                            <div class="detail-value" id="pressure">۱۰۱۲ hPa</div>
+                            <div class="detail-label">فشار</div>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <div class="detail-icon"><i class="fas fa-eye"></i></div>
+                            <div class="detail-value" id="visibility">۱۰ km</div>
+                            <div class="detail-label">دید</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="weather-icon">
+                    <i class="fas fa-sun" id="weatherIcon"></i>
+                </div>
+            </div>
+            
+            <div class="sun-movement">
+                <div class="sun-path"></div>
+                <div class="sun-icon" id="sunPosition"><i class="fas fa-sun"></i></div>
+                <div class="sunrise-sunset">
+                    <div class="sun-event">
+                        <i class="fas fa-sunrise"></i>
+                        <div id="sunrise">۵:۴۵ صبح</div>
+                    </div>
+                    <div class="sun-event">
+                        <i class="fas fa-sunset"></i>
+                        <div id="sunset">۷:۳۰ شب</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="forecast-container">
+            <h3 class="section-title"><i class="fas fa-calendar-alt"></i> پیش‌بینی ۵ روزه</h3>
+            <div class="forecast-cards" id="forecastCards">
+                <!-- Forecast cards will be added here by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="hourly-forecast">
+            <h3 class="section-title"><i class="fas fa-chart-line"></i> پیش‌بینی ساعتی</h3>
+            <div class="hourly-chart-container">
+                <canvas id="hourlyChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="air-quality">
+            <h3 class="section-title"><i class="fas fa-lungs"></i> کیفیت هوا</h3>
+            <div class="main-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <div style="font-size: 1.2em; margin-bottom: 5px;">شاخص کیفیت هوا (AQI)</div>
+                        <div style="font-size: 2em; font-weight: 700;" id="aqiValue">۷۲</div>
+                        <div style="font-size: 1.1em;" id="aqiStatus">متوسط</div>
+                    </div>
+                    <div style="font-size: 3em; color: var(--warning);">
+                        <i class="fas fa-smog"></i>
+                    </div>
+                </div>
+                
+                <div class="aqi-indicator">
+                    <div class="aqi-level" id="aqiLevel"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                    <div style="font-size: 0.8em;">خوب</div>
+                    <div style="font-size: 0.8em;">متوسط</div>
+                    <div style="font-size: 0.8em;">ناسالم</div>
+                    <div style="font-size: 0.8em;">بسیار ناسالم</div>
+                    <div style="font-size: 0.8em;">خطرناک</div>
+                </div>
+                
+                <div class="weather-details" style="margin-top: 30px;">
+                    <div class="detail-card">
+                        <div class="detail-icon"><i class="fas fa-smog"></i></div>
+                        <div class="detail-value" id="pm25">۲۵ μg/m³</div>
+                        <div class="detail-label">ذرات PM2.5</div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <div class="detail-icon"><i class="fas fa-smog"></i></div>
+                        <div class="detail-value" id="pm10">۵۰ μg/m³</div>
+                        <div class="detail-label">ذرات PM10</div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <div class="detail-icon"><i class="fas fa-fire"></i></div>
+                        <div class="detail-value" id="co">۱.۲ ppm</div>
+                        <div class="detail-label">مونوکسید کربن</div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <div class="detail-icon"><i class="fas fa-wind"></i></div>
+                        <div class="detail-value" id="no2">۲۰ ppb</div>
+                        <div class="detail-label">دی‌اکسید نیتروژن</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="map-container">
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt" style="font-size: 2em; margin-left: 10px;"></i>
+                نقشه هواشناسی
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle" style="color: var(--success); margin-left: 10px;"></i>
+        <span id="notificationText">موقعیت شما با موفقیت تشخیص داده شد</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // داده‌های نمونه (در حالت واقعی از API دریافت می‌شود)
+        const sampleData = {
+            location: "تهران، ایران",
+            current: {
+                temp: 24,
+                description: "آسمان صاف",
+                icon: "fa-sun",
+                windSpeed: 10,
+                humidity: 45,
+                pressure: 1012,
+                visibility: 10,
+                feelsLike: 25,
+                dewPoint: 12,
+                uvIndex: 6,
+                sunrise: "5:45",
+                sunset: "19:30",
+                time: "12:00"
+            },
+            forecast: [
+                { day: "دوشنبه", icon: "fa-sun", maxTemp: 26, minTemp: 16 },
+                { day: "سه‌شنبه", icon: "fa-cloud-sun", maxTemp: 25, minTemp: 15 },
+                { day: "چهارشنبه", icon: "fa-cloud", maxTemp: 22, minTemp: 14 },
+                { day: "پنجشنبه", icon: "fa-cloud-rain", maxTemp: 20, minTemp: 13 },
+                { day: "جمعه", icon: "fa-sun", maxTemp: 24, minTemp: 15 }
+            ],
+            hourly: [
+                { time: "۱۲:۰۰", temp: 24, icon: "fa-sun" },
+                { time: "۱۳:۰۰", temp: 25, icon: "fa-sun" },
+                { time: "۱۴:۰۰", temp: 26, icon: "fa-sun" },
+                { time: "۱۵:۰۰", temp: 26, icon: "fa-cloud-sun" },
+                { time: "۱۶:۰۰", temp: 25, icon: "fa-cloud-sun" },
+                { time: "۱۷:۰۰", temp: 24, icon: "fa-cloud-sun" },
+                { time: "۱۸:۰۰", temp: 22, icon: "fa-cloud" },
+                { time: "۱۹:۰۰", temp: 20, icon: "fa-cloud" },
+                { time: "۲۰:۰۰", temp: 18, icon: "fa-cloud" },
+                { time: "۲۱:۰۰", temp: 17, icon: "fa-cloud" },
+                { time: "۲۲:۰۰", temp: 16, icon: "fa-moon" },
+                { time: "۲۳:۰۰", temp: 15, icon: "fa-moon" }
+            ],
+            airQuality: {
+                aqi: 72,
+                status: "متوسط",
+                pm25: 25,
+                pm10: 50,
+                co: 1.2,
+                no2: 20,
+                so2: 5,
+                o3: 30
+            }
+        };
+
+        // ماه‌های فارسی
+        const persianMonths = [
+            'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+            'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+        ];
+
+        // روزهای هفته فارسی
+        const persianWeekdays = [
+            'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'
+        ];
+
+        // تبدیل تاریخ میلادی به شمسی
+        function gregorianToJalali(gy, gm, gd) {
+            const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            let jy = (gy <= 1600) ? 0 : 979;
+            gy -= (gy <= 1600) ? 621 : 1600;
+            let gy2 = (gm > 2) ? (gy + 1) : gy;
+            let days = (365 * gy) + parseInt((gy2 + 3) / 4) - parseInt((gy2 + 99) / 100) + 
+                       parseInt((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+            jy += 33 * parseInt(days / 12053);
+            days %= 12053;
+            jy += 4 * parseInt(days / 1461);
+            days %= 1461;
+            if (days > 365) {
+                jy += parseInt((days - 1) / 365);
+                days = (days - 1) % 365;
+            }
+            let jm = (days < 186) ? 1 + parseInt(days / 31) : 7 + parseInt((days - 186) / 30);
+            let jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+            return [jy, jm, jd];
+        }
+
+        // تبدیل اعداد انگلیسی به فارسی
+        function toPersianNumber(num) {
+            const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+            return num.toString().replace(/\d/g, d => persianDigits[d]);
+        }
+
+        // فرمت کردن زمان
+        function formatTime(hours, minutes) {
+            const persianHours = toPersianNumber(hours);
+            const persianMinutes = toPersianNumber(minutes);
+            return `${persianHours}:${persianMinutes}`;
+        }
+
+        // دریافت تاریخ و زمان فعلی
+        function getCurrentDateTime() {
+            const now = new Date();
+            const weekday = now.getDay();
+            const jalaliDate = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+            
+            const dayName = persianWeekdays[weekday];
+            const monthName = persianMonths[jalaliDate[1] - 1];
+            const day = toPersianNumber(jalaliDate[2]);
+            const year = toPersianNumber(jalaliDate[0]);
+            
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'بعدازظهر' : 'صبح';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            
+            return {
+                date: `${dayName} ${day} ${monthName} ${year}`,
+                time: `${toPersianNumber(hours)}:${toPersianNumber(minutes)} ${ampm}`
+            };
+        }
+
+        // تنظیم موقعیت خورشید بر اساس زمان فعلی
+        function setSunPosition() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            
+            // زمان طلوع و غروب (به صورت نمونه)
+            const sunriseHour = 5;
+            const sunriseMinute = 45;
+            const sunsetHour = 19;
+            const sunsetMinute = 30;
+            
+            // محاسبه موقعیت خورشید
+            const totalMinutesInDay = (sunsetHour - sunriseHour) * 60 + (sunsetMinute - sunriseMinute);
+            const currentMinutes = (hours - sunriseHour) * 60 + (minutes - sunriseMinute);
+            
+            let position = (currentMinutes / totalMinutesInDay) * 100;
+            position = Math.max(0, Math.min(100, position));
+            
+            document.getElementById('sunPosition').style.left = `${position}%`;
+        }
+
+        // نمایش اطلاعیه
+        function showNotification(text) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = text;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // تغییر تم
+        function toggleTheme() {
+            const body = document.body;
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // بارگذاری داده‌های هواشناسی
+        function loadWeatherData() {
+            // در حالت واقعی اینجا درخواست به API ارسال می‌شود
+            const data = sampleData;
+            
+            // نمایش داده‌های فعلی
+            document.getElementById('location').textContent = data.location;
+            
+            const dateTime = getCurrentDateTime();
+            document.getElementById('dateTime').textContent = `${dateTime.date} - ${dateTime.time}`;
+            
+            document.getElementById('temperature').innerHTML = `${toPersianNumber(data.current.temp)} <span style="font-size: 0.5em; margin-top: 0.2em;">°C</span>`;
+            document.getElementById('weatherDescription').textContent = data.current.description;
+            document.getElementById('weatherIcon').className = `fas ${data.current.icon}`;
+            
+            document.getElementById('windSpeed').textContent = `${toPersianNumber(data.current.windSpeed)} km/h`;
+            document.getElementById('humidity').textContent = `${toPersianNumber(data.current.humidity)}٪`;
+            document.getElementById('pressure').textContent = `${toPersianNumber(data.current.pressure)} hPa`;
+            document.getElementById('visibility').textContent = `${toPersianNumber(data.current.visibility)} km`;
+            
+            document.getElementById('sunrise').textContent = `${toPersianNumber(data.current.sunrise)} صبح`;
+            document.getElementById('sunset').textContent = `${toPersianNumber(data.current.sunset)} شب`;
+            
+            // نمایش پیش‌بینی ۵ روزه
+            const forecastCards = document.getElementById('forecastCards');
+            forecastCards.innerHTML = '';
+            
+            data.forecast.forEach(day => {
+                const card = document.createElement('div');
+                card.className = 'forecast-card';
+                card.innerHTML = `
+                    <div class="forecast-day">${day.day}</div>
+                    <div class="forecast-icon"><i class="fas ${day.icon}"></i></div>
+                    <div class="forecast-temp">
+                        <span class="max-temp">${toPersianNumber(day.maxTemp)}°</span>
+                        <span class="min-temp">${toPersianNumber(day.minTemp)}°</span>
+                    </div>
+                `;
+                forecastCards.appendChild(card);
+            });
+            
+            // نمایش کیفیت هوا
+            document.getElementById('aqiValue').textContent = toPersianNumber(data.airQuality.aqi);
+            document.getElementById('aqiStatus').textContent = data.airQuality.status;
+            document.getElementById('aqiLevel').style.width = `${(data.airQuality.aqi / 300) * 100}%`;
+            
+            document.getElementById('pm25').textContent = `${toPersianNumber(data.airQuality.pm25)} μg/m³`;
+            document.getElementById('pm10').textContent = `${toPersianNumber(data.airQuality.pm10)} μg/m³`;
+            document.getElementById('co').textContent = `${toPersianNumber(data.airQuality.co)} ppm`;
+            document.getElementById('no2').textContent = `${toPersianNumber(data.airQuality.no2)} ppb`;
+            
+            // ایجاد نمودار ساعتی
+            createHourlyChart(data.hourly);
+            
+            // تنظیم موقعیت خورشید
+            setSunPosition();
+            
+            // مخفی کردن صفحه لودینگ و نمایش محتوا
+            setTimeout(() => {
+                document.querySelector('.loading').style.display = 'none';
+                document.querySelector('.container').style.display = 'flex';
+            }, 1500);
+        }
+
+        // ایجاد نمودار پیش‌بینی ساعتی
+        function createHourlyChart(hourlyData) {
+            const ctx = document.getElementById('hourlyChart').getContext('2d');
+            
+            const labels = hourlyData.map(item => item.time);
+            const temps = hourlyData.map(item => item.temp);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'دما (°C)',
+                        data: temps,
+                        borderColor: 'rgba(58, 230, 255, 1)',
+                        backgroundColor: 'rgba(58, 230, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: 'rgba(255, 255, 255, 1)',
+                        pointBorderColor: 'rgba(58, 230, 255, 1)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            rtl: true,
+                            bodyFont: {
+                                family: 'Vazirmatn'
+                            },
+                            titleFont: {
+                                family: 'Vazirmatn'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // رویدادهای صفحه
+        document.addEventListener('DOMContentLoaded', () => {
+            // بارگذاری تم ذخیره شده
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.body.classList.add(savedTheme + '-mode');
+            
+            // بارگذاری داده‌های هواشناسی
+            loadWeatherData();
+            
+            // نمایش اطلاعیه
+            showNotification('موقعیت شما با موفقیت تشخیص داده شد: تهران، ایران');
+            
+            // رویداد تغییر تم
+            document.getElementById('themeSwitch').addEventListener('click', toggleTheme);
+            
+            // رویداد جستجو
+            document.getElementById('searchBtn').addEventListener('click', () => {
+                const query = document.getElementById('searchInput').value;
+                if (query.trim()) {
+                    showNotification(`جستجو برای: ${query}`);
+                    // در حالت واقعی اینجا درخواست به API ارسال می‌شود
+                }
+            });
+            
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('searchBtn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
